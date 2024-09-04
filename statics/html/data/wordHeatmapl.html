@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>选择学段</title>
+    <style>
+        body {
+            text-align: center;
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            margin: 0;
+            padding: 0;
+        }
+
+        #container {
+            position: relative;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #87CEFA;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        #schoolType {
+            font-size: 16px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: 100%;
+            outline: none;
+
+        }
+
+        #schoolTypeContainer {
+            text-align: right;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <h1>请选择学段：</h1>
+        <select id="schoolType" onchange="redirectToPage()">
+            <option value="">-- 请选择学段 --</option>
+            <option value="小学">小学</option>
+            <option value="初中">初中</option>
+            <option value="高中">高中</option>
+        </select>
+    </div>
+
+    <script>
+        function redirectToPage() {
+            var selectedValue = document.getElementById("schoolType").value;
+            if (selectedValue === "小学") {
+                window.location.href = "/static/html/data/view/heatmap-小学.html"; // 跳转到小学页面的URL
+            } else if (selectedValue === "初中") {
+                window.location.href = "/static/html/data/view/heatmap-初中.html"; // 跳转到初中页面的URL
+            } else if (selectedValue === "高中") {
+                window.location.href = "/static/html/data/view/heatmap-高中.html"; // 跳转到高中页面的URL
+            }
+        }
+    </script>
+</body>
+</html>
+

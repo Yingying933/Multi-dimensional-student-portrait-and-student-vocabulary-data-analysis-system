@@ -1,0 +1,135 @@
+﻿<!DOCTYPE HTML>
+<html lang="zh-cn">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>分批加载数据</title>
+
+    <link href="/static/plugins/bootstrap-3.3.0/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="/static/plugins/material-design-iconic-font-2.2.0/css/material-design-iconic-font.min.css" rel="stylesheet"/>
+    <link href="/static/plugins/bootstrap-table-1.11.0/bootstrap-table.min.css" rel="stylesheet"/>
+    <link href="/static/plugins/waves-0.7.5/waves.min.css" rel="stylesheet"/>
+    <link href="/static/plugins/jquery-confirm/jquery-confirm.min.css" rel="stylesheet"/>
+    <link href="/static/plugins/select2/css/select2.min.css" rel="stylesheet"/>
+
+    <link href="/static/css/common.css" rel="stylesheet"/>
+</head>
+<body>
+<div id="main" style="overflow-x: auto;">
+    <div id="toolbar">
+        <a class="waves-effect waves-button"> 此界面不可进行数据处理，仅用于查看！</a>
+    </div>
+    <table id="table"></table>
+</div>
+<script src="/static/plugins/jquery.1.12.4.min.js"></script>
+<script src="/static/plugins/bootstrap-3.3.0/js/bootstrap.min.js"></script>
+<script src="/static/plugins/bootstrap-table-1.11.0/bootstrap-table.min.js"></script>
+<script src="/static/plugins/bootstrap-table-1.11.0/locale/bootstrap-table-zh-CN.min.js"></script>
+<script src="/static/plugins/waves-0.7.5/waves.min.js"></script>
+<script src="/static/plugins/jquery-confirm/jquery-confirm.min.js"></script>
+<script src="/static/plugins/select2/js/select2.min.js"></script>
+
+<script src="/static/js/common.js"></script>
+<script>
+var $table = $('#table');
+var data = []; // 保存所有数据
+var batchSize = 50; // 每批加载的数据量
+var currentPage = 1; // 当前页数
+
+$(function() {
+    $(document).on('focus', 'input[type="text"]', function() {
+        $(this).parent().find('label').addClass('active');
+    }).on('blur', 'input[type="text"]', function() {
+        if ($(this).val() == '') {
+            $(this).parent().find('label').removeClass('active');
+        }
+    });
+
+    // 初始化表格
+    initTable();
+
+    // 加载第一批数据
+    loadData(currentPage);
+});
+
+// 初始化表格
+function initTable() {
+    $table.bootstrapTable({
+        height: getHeight(),
+        striped: true,
+        search: true,
+        searchOnEnterKey: true,
+        showRefresh: true,
+        showToggle: true,
+        showColumns: true,
+        minimumCountColumns: 2,
+        showPaginationSwitch: true,
+        clickToSelect: true,
+        detailView: true,
+        detailFormatter: 'detailFormatter',
+        pagination: true,
+        paginationLoop: false,
+        classes: 'table table-hover table-no-bordered',
+        smartDisplay: true,
+        idField: 'xueshengbianhao',
+        sortName: 'xueshengbianhao',
+        sortOrder: 'desc',
+        escape: true,
+        searchOnEnterKey: true,
+        maintainSelected: true,
+        toolbar: '#toolbar',
+        columns: [
+            {field: 'state', checkbox: true},
+            {field: 'xueshengbianhao', title: '学生编号', sortable: true, halign: 'center', align: 'center'},
+            {field: 'xueduan', title: '学段', sortable: true, halign: 'center', align: 'center'},
+            {field: 'shoucejuanhao', title: '首测卷号', sortable: true, halign: 'center', align: 'center'},
+            {field: 'renshi', title: '首测认识词汇', sortable: true, halign: 'center', align: 'center'},
+            {field: 'burenshi', title: '首测不认识词汇', sortable: true, halign: 'center', align: 'center'}
+        ]
+    }).on('all.bs.table', function (e, name, args) {
+        $('[data-toggle="tooltip"]').tooltip();
+        $('[data-toggle="popover"]').popover();
+    });
+}
+
+// 加载数据
+function loadData(page) {
+    var startIndex = (page - 1) * batchSize;
+    var endIndex = startIndex + batchSize;
+    var batchData = data.slice(startIndex, endIndex);
+
+    // 清空表格
+    $table.bootstrapTable('removeAll');
+
+    // 添加批量数据到表格
+    $table.bootstrapTable('append', batchData);
+}
+
+function actionFormatter(value, row, index) {
+    return [
+        '<a class="edit ml10" href="javascript:void(0)" data-toggle="tooltip" title="编辑"><i class="glyphicon glyphicon-edit"></i></a>　',
+        '<a class="remove ml10" href="javascript:void(0)" data-toggle="tooltip" title="删除"><i class="glyphicon glyphicon-remove"></i></a>'
+    ].join('');
+}
+
+window.actionEvents = {
+    'click .edit': function (e, value, row, index) {
+        alert('You click edit icon, row: ' + JSON.stringify(row));
+        console.log(value, row, index);
+    },
+    'click .remove': function (e, value, row, index) {
+        alert('You click remove icon, row: ' + JSON.stringify(row));
+        console.log(value, row, index);
+    }
+};
+function detailFormatter(index, row) {
+    var html = [];
+    $.each(row, function (key, value) {
+        html.push('<p><b style="text-align: left;">' + key + ':</b> <span style="text-align: left;">' + value + '</span></p>');
+    });
+    return html.join('');
+}
+</script>
+</body>
+</html>

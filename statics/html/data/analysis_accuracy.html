@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>学生成绩统计</title>
+    <!-- 引入Chart.js库 -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <h1>学生成绩统计</h1>
+
+    <!-- 添加一个容器来显示图表 -->
+    <div>
+        <canvas id="barChart" width="400" height="200"></canvas>
+    </div>
+    <div>
+        <canvas id="pieChart" width="400" height="200"></canvas>
+    </div>
+
+    <script>
+        // 示例数据
+        const allWordsData = [
+            // ...
+        ];
+
+        const examData = [
+            // ...
+        ];
+
+        const resultsData = [
+            // ...
+        ];
+
+        const studentsData = [
+            // ...
+        ];
+
+        // 处理数据和绘制图表
+        function processDataAndDrawCharts() {
+            // 根据xueduan属性分为三类
+            const classA = [];
+            const classB = [];
+            const classC = [];
+
+            resultsData.forEach(result => {
+                const student = studentsData.find(s => s.xueshengbianhao === result.xueshengbianhao);
+                const xueduan = student ? student.xueduan : null;
+
+                if (xueduan === 'A') {
+                    classA.push(result.chushixuexili);
+                } else if (xueduan === 'B') {
+                    classB.push(result.chushixuexili);
+                } else if (xueduan === 'C') {
+                    classC.push(result.chushixuexili);
+                }
+            });
+
+            // 统计每一类 chushixuexili 的最低分、最高分和平均分
+            const getStats = (data) => {
+                const minScore = Math.min(...data);
+                const maxScore = Math.max(...data);
+                const avgScore = data.reduce((sum, score) => sum + score, 0) / data.length;
+                return { minScore, maxScore, avgScore };
+            };
+
+            const statsA = getStats(classA);
+            const statsB = getStats(classB);
+            const statsC = getStats(classC);
+
+            // 绘制柱状图
+            const barChartCanvas = document.getElementById('barChart').getContext('2d');
+            const barChart = new Chart(barChartCanvas, {
+                type: 'bar',
+                data: {
+                    labels: ['Class A', 'Class B', 'Class C'],
+                    datasets: [{
+                        label: '最低分',
+                        data: [statsA.minScore, statsB.minScore, statsC.minScore],
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1
+                    }, {
+                        label: '最高分',
+                        data: [statsA.maxScore, statsB.maxScore, statsC.maxScore],
+                        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        borderWidth: 1
+                    }, {
+                        label: '平均分',
+                        data: [statsA.avgScore, statsB.avgScore, statsC.avgScore],
+                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+
+            // 绘制饼状图
+            const pieChartCanvas = document.getElementById('pieChart').getContext('2d');
+            const pieChart = new Chart(pieChartCanvas, {
+                type: 'pie',
+                data: {
+                    labels: ['<60', '60-69', '70-79', '80-89', '90-99', '100'],
+                    datasets: [{
+                        data: [10, 20, 30, 40, 50, 60],
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.5)',
+                            'rgba(255, 159, 64, 0.5)',
+                            'rgba(255, 205, 86, 0.5)',
+                            'rgba(75, 192, 192, 0.5)',
+                            'rgba(54, 162, 235, 0.5)',
+                            'rgba(153, 102, 255, 0.5)'
+                        ]
+                    }]
+                }
+            });
+        }
+
+        // 调用函数处理数据并绘制图表
+        processDataAndDrawCharts();
+    </script>
+</body>
+</html>
